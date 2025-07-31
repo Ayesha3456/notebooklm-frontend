@@ -1,0 +1,27 @@
+<div class="container-fluid h-100 d-flex flex-column justify-content-between p-4">
+  <div>
+    <h4 class="text-purple">Chat about your document</h4>
+    <div *ngFor="let msg of messages" class="mb-3">
+      <strong>{{ msg.sender === 'user' ? 'You' : 'Bot' }}:</strong> {{ msg.text }}
+      <div *ngIf="msg.pages">
+        <button
+          *ngFor="let p of msg.pages"
+          class="btn btn-sm btn-outline-purple me-2 mt-1"
+          (click)="scrollToPage(p)">
+          Go to Page {{ p }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="input-group mt-3">
+    <input
+      [(ngModel)]="userMessage"
+      class="form-control"
+      placeholder="Ask about the document"
+      (keyup.enter)="sendMessage()" />
+    <button class="btn btn-send" (click)="sendMessage()">
+      <i class="bi bi-arrow-up-right-circle-fill"></i>
+    </button>
+  </div>
+</div>

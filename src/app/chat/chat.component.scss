@@ -1,0 +1,35 @@
+.text-purple {
+  color: #6c63ff;
+}
+
+.btn-outline-purple {
+  color: #6c63ff;
+  border-color: #6c63ff;
+
+  &:hover {
+    background-color: #6c63ff;
+    color: white;
+  }
+}
+
+.btn-send {
+  background-color: #6c63ff;
+  color: white;
+  border: none;
+  font-size: 1.6rem;
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top-right-radius: 0.375rem;
+  border-bottom-right-radius: 0.375rem;
+
+  &:hover {
+    background-color: #574de5;
+  }
+}
+
+.input-group .form-control {
+  border-top-left-radius: 0.375rem;
+  border-bottom-left-radius: 0.375rem;
+}
