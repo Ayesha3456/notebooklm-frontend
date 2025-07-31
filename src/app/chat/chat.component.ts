@@ -23,7 +23,7 @@ export class ChatComponent {
     this.messages.push({ sender: 'user', text: msg });
     this.userMessage = '';
   
-    this.http.post<any>('http://localhost:8080/chat', { question: msg }).subscribe({
+    this.http.post<any>('https://notebooklm-backend-40m9.onrender.com/', { question: msg }).subscribe({
       next: (res) => {
         this.messages.push({ sender: 'bot', text: res.answer, pages: res.pages });
       },
