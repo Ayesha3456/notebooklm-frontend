@@ -72,7 +72,7 @@ export class PdfUploadComponent implements OnInit {
     this.messages.push({ sender: 'user', text: msg });
     this.userMessage = '';
 
-    this.http.post('https://notebooklm-backend-40m9.onrender.com', { question: msg }).subscribe((res: any) => {
+    this.http.post('http://localhost:8080/chat', { question: msg }).subscribe((res: any) => {
       this.messages.push({ sender: 'bot', text: res.answer, pages: res.pages });
       if (res.pages?.length) {
         this.pdfState.scrollToPage(res.pages[0]);
