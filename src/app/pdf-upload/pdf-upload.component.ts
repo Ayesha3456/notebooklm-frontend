@@ -29,11 +29,20 @@ export class PdfUploadComponent implements OnInit {
 
   uploadPdf(event: any): void {
     const file = event.target.files[0];
-    if (!file) return;
+    if (!file || file.type !== 'application/pdf') {
+      alert('Only PDF files are allowed.');
+      return;
+    }
+
+    // Reset previous state
+    this.messages = [];
+    this.userMessage = '';
+    this.page = 1;
+    this.totalPages = 0;
+    this.pdfSrc = null;
 
     const reader = new FileReader();
     this.loading = true;
-    this.pdfSrc = null;
 
     reader.onload = () => {
       setTimeout(() => {
@@ -47,12 +56,13 @@ export class PdfUploadComponent implements OnInit {
     const formData = new FormData();
     formData.append('pdf', file);
 
-    this.http.post<any>('https://notebooklm-backend-40m9.onrender.com/upload', formData).subscribe({
+    this.http.post<any>('http://localhost:8080/upload', formData).subscribe({
       next: (res) => {
         this.totalPages = res.numPages || 0;
       },
       error: () => {
         this.loading = false;
+        alert('Failed to upload PDF');
       }
     });
   }
@@ -87,9 +97,23 @@ export class PdfUploadComponent implements OnInit {
   handleDrop(event: DragEvent) {
     event.preventDefault();
     const file = event.dataTransfer?.files?.[0];
-    if (file) {
-      const fakeEvent = { target: { files: [file] } };
-      this.uploadPdf(fakeEvent);
+
+    if (!file) return;
+
+    if (file.type !== 'application/pdf') {
+      alert('Only PDF files are allowed.');
+      return;
     }
+
+    const fakeEvent = { target: { files: [file] } };
+    this.uploadPdf(fakeEvent);
+  }
+
+  resetUpload() {
+    this.pdfSrc = null;
+    this.messages = [];
+    this.userMessage = '';
+    this.page = 1;
+    this.totalPages = 0;
   }
 }
