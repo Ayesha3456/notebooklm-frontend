@@ -18,3 +18,31 @@ This is the Angular frontend of the NotebookLM Clone app. It allows users to upl
 cd frontend
 npm install
 ng serve
+```
+
+### 📦 Build for Production
+```bash
+ng build --configuration production
+```
+
+## 🔌 Backend API Configuration
+
+Make sure the following API is used in your `ChatComponent`:
+
+```ts
+this.http.post<any>('https://notebooklm-backend-40m9.onrender.com/chat', { question: msg });
+```
+
+## 💡 Features
+- Upload and preview PDF
+- Chat interface to ask questions
+- Page navigation from chat responses
+
+## 📁 Folder Highlights
+```
+src/
+├── app/
+│   ├── chat/        # Chat interface component
+│   └── upload/      # Upload UI
+├── styles.scss      # Global styles
+```
