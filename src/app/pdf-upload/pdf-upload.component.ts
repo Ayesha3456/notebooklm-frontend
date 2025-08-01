@@ -20,7 +20,7 @@ export class PdfUploadComponent implements OnInit {
 
   userMessage = '';
   messages: any[] = [];
-  parsedText = ''; // ⬅️ added to hold PDF content
+  parsedText = ''; // PDF content to send to backend
 
   constructor(private http: HttpClient, public pdfState: PdfStateService) {}
 
@@ -42,27 +42,28 @@ export class PdfUploadComponent implements OnInit {
     this.totalPages = 0;
     this.pdfSrc = null;
     this.parsedText = '';
-    const reader = new FileReader();
     this.loading = true;
 
+    const reader = new FileReader();
     reader.onload = () => {
-      setTimeout(() => {
-        this.pdfSrc = reader.result;
-        this.loading = false;
-      }, 100);
+      this.pdfSrc = reader.result;
     };
-
     reader.readAsDataURL(file);
 
     const formData = new FormData();
     formData.append('pdf', file);
 
-    this.http.post<any>('http://localhost:8080/upload', formData).subscribe({
+    // ✅ Update this to your deployed backend if needed
+    const uploadUrl = 'https://notebooklm-backend-40m9.onrender.com/upload';
+
+    this.http.post<any>(uploadUrl, formData).subscribe({
       next: (res) => {
         this.totalPages = res.numPages || 0;
         this.parsedText = res.parsedText || '';
+        this.loading = false;
       },
-      error: () => {
+      error: (err) => {
+        console.error('❌ Upload error:', err);
         this.loading = false;
         alert('Failed to upload PDF');
       }
@@ -84,7 +85,9 @@ export class PdfUploadComponent implements OnInit {
     this.messages.push({ sender: 'user', text: msg });
     this.userMessage = '';
 
-    this.http.post<any>('https://notebooklm-backend-40m9.onrender.com/chat', {
+    const chatUrl = 'https://notebooklm-backend-40m9.onrender.com/chat';
+
+    this.http.post<any>(chatUrl, {
       question: msg,
       context: this.parsedText
     }).subscribe((res: any) => {
