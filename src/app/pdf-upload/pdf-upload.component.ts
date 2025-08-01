@@ -20,6 +20,7 @@ export class PdfUploadComponent implements OnInit {
 
   userMessage = '';
   messages: any[] = [];
+  parsedText = ''; // ⬅️ added to hold PDF content
 
   constructor(private http: HttpClient, public pdfState: PdfStateService) {}
 
@@ -40,7 +41,7 @@ export class PdfUploadComponent implements OnInit {
     this.page = 1;
     this.totalPages = 0;
     this.pdfSrc = null;
-
+    this.parsedText = '';
     const reader = new FileReader();
     this.loading = true;
 
@@ -59,6 +60,7 @@ export class PdfUploadComponent implements OnInit {
     this.http.post<any>('http://localhost:8080/upload', formData).subscribe({
       next: (res) => {
         this.totalPages = res.numPages || 0;
+        this.parsedText = res.parsedText || '';
       },
       error: () => {
         this.loading = false;
@@ -77,12 +79,15 @@ export class PdfUploadComponent implements OnInit {
 
   sendMessage() {
     const msg = this.userMessage.trim();
-    if (!msg) return;
+    if (!msg || !this.parsedText) return;
 
     this.messages.push({ sender: 'user', text: msg });
     this.userMessage = '';
 
-    this.http.post<any>('https://notebooklm-backend-40m9.onrender.com/chat', { question: msg }).subscribe((res: any) => {
+    this.http.post<any>('https://notebooklm-backend-40m9.onrender.com/chat', {
+      question: msg,
+      context: this.parsedText
+    }).subscribe((res: any) => {
       this.messages.push({ sender: 'bot', text: res.answer, pages: res.pages });
       if (res.pages?.length) {
         this.pdfState.scrollToPage(res.pages[0]);
@@ -97,7 +102,6 @@ export class PdfUploadComponent implements OnInit {
   handleDrop(event: DragEvent) {
     event.preventDefault();
     const file = event.dataTransfer?.files?.[0];
-
     if (!file) return;
 
     if (file.type !== 'application/pdf') {
@@ -115,5 +119,6 @@ export class PdfUploadComponent implements OnInit {
     this.userMessage = '';
     this.page = 1;
     this.totalPages = 0;
+    this.parsedText = '';
   }
 }
